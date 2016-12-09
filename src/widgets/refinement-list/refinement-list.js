@@ -24,6 +24,8 @@ const bem = bemHelper('ais-refinement-list');
  * @param  {string[]|Function} [options.sortBy=['count:desc', 'name:asc']] How to sort refinements. Possible values: `count:asc|count:desc|name:asc|name:desc|isRefined`.
  *   You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax). [*]
  * @param  {string} [options.limit=10] How much facet values to get. When the show more feature is activated this is the minimum number of facets requested (the show more button is not in active state). [*]
+ * @param  {boolean} [options.searchForValues=false] Add a search input to let the user search for more facet values
+ * @param  {string} [options.searchPlaceholder=""] Value of the search field placeholder
  * @param  {object|boolean} [options.showMore=false] Limit the number of results and display a showMore button
  * @param  {object} [options.showMore.templates] Templates to use for showMore
  * @param  {object} [options.showMore.templates.active] Template used when showMore was clicked
@@ -64,6 +66,8 @@ refinementList({
   [ collapsible=false ],
   [ showMore.{templates: {active, inactive}, limit} ],
   [ collapsible=false ]
+  [ searchForValues = false ]
+  [ searchPlaceholder = '' ]
 })`;
 function refinementList({
     container,
@@ -77,6 +81,8 @@ function refinementList({
     transformData,
     autoHideContainer = true,
     showMore = false,
+    searchForValues = false,
+    searchPlaceholder = '',
   }) {
   const showMoreConfig = getShowMoreConfig(showMore);
   if (showMoreConfig && showMoreConfig.limit < limit) {

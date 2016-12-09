@@ -144,8 +144,11 @@ class RefinementList extends React.Component {
         /> :
         undefined;
 
+    const searchInput = <input />;
+
     return (
       <div className={cx(cssClassList)}>
+        {searchInput}
         {displayedFacetValues.map(this._generateFacetItem, this)}
         {showMoreBtn}
       </div>
