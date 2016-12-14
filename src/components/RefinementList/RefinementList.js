@@ -6,6 +6,8 @@ import Template from '../Template.js';
 import RefinementListItem from './RefinementListItem.js';
 import isEqual from 'lodash/isEqual';
 
+import SearchBox from '../SearchBox';
+
 class RefinementList extends React.Component {
   constructor(props) {
     super(props);
@@ -121,6 +123,13 @@ class RefinementList extends React.Component {
     this.setState({isShowMoreOpen});
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.searchbox && !nextProps.isFromSearch) {
+      console.log(this.searchbox);
+      this.searchbox.clearInput();
+    }
+  }
+
   render() {
     // Adding `-lvl0` classes
     const cssClassList = [this.props.cssClasses.list];
@@ -144,7 +153,8 @@ class RefinementList extends React.Component {
         /> :
         undefined;
 
-    const searchInput = <input />;
+    const searchInput = this.props.searchFacetValues ?
+      <SearchBox ref={i => { this.searchbox = i; console.log(i); }} placeholder="" onChange={this.props.searchFacetValues}/> : null;
 
     return (
       <div className={cx(cssClassList)}>
@@ -173,6 +183,8 @@ RefinementList.propTypes = {
   showMore: React.PropTypes.bool,
   templateProps: React.PropTypes.object.isRequired,
   toggleRefinement: React.PropTypes.func.isRequired,
+  searchFacetValues: React.PropTypes.func,
+  isFromSearch: React.PropTypes.bool,
 };
 
 RefinementList.defaultProps = {

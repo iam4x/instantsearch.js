@@ -163,6 +163,26 @@ search.addWidget(
 
 search.addWidget(
   instantsearch.widgets.refinementList({
+    container: '#searchable-brands',
+    attributeName: 'brand',
+    operator: 'or',
+    limit: 3,
+    cssClasses: {
+      header: 'facet-title',
+      item: 'facet-value checkbox',
+      count: 'facet-count pull-right',
+      active: 'facet-active',
+    },
+    templates: {
+      header: 'Searchable brands',
+    },
+    searchForValues: true,
+    searchPlaceholder: 'Other brands...',
+  })
+);
+
+search.addWidget(
+  instantsearch.widgets.refinementList({
     collapsible: {
       collapsed: true,
     },
