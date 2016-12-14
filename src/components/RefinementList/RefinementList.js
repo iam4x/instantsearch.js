@@ -129,8 +129,24 @@ class RefinementList extends React.Component {
     }
   }
 
+  refineFirstValue() {
+    const firstValue = this.props.facetValues[0];
+    if (firstValue) {
+      const actualValue = firstValue[this.props.attributeNameKey];
+      this.props.toggleRefinement(actualValue);
+    }
+  }
+
   render() {
-    const {cssClasses, limitMin, limitMax, facetValues, searchFacetValues, isFromSearch, searchPlaceholder} = this.props;
+    const {
+      cssClasses,
+      limitMin,
+      limitMax,
+      facetValues,
+      searchFacetValues,
+      isFromSearch,
+      searchPlaceholder,
+    } = this.props;
 
     // Adding `-lvl0` classes
     const cssClassList = [cssClasses.list];
@@ -155,7 +171,10 @@ class RefinementList extends React.Component {
         undefined;
 
     const searchInput = searchFacetValues ?
-      <SearchBox ref={i => { this.searchbox = i; }} placeholder={searchPlaceholder} onChange={searchFacetValues}/> :
+      <SearchBox ref={i => { this.searchbox = i; }}
+        placeholder={searchPlaceholder}
+        onChange={searchFacetValues}
+        onValidate={() => this.refineFirstValue()} /> :
       null;
 
     const noResults = searchFacetValues && isFromSearch && facetValues.length === 0 ?

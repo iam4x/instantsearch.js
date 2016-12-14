@@ -5,6 +5,7 @@ export default class SearchBox extends React.Component {
   static propTypes = {
     placeholder: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    onValidate: React.PropTypes.func.isRequired,
   }
 
   clearInput() {
@@ -13,10 +14,22 @@ export default class SearchBox extends React.Component {
     }
   }
 
+  validateSearch(e) {
+    e.preventDefault();
+    if (this.input) {
+      const inputValue = this.input.value;
+      if (inputValue) this.props.onValidate();
+    }
+  }
+
   render() {
     const {placeholder, onChange} = this.props;
     return (
-      <form noValidate="novalidate" className="searchbox sbx-custom" onReset={() => { onChange(''); }}>
+      <form noValidate="novalidate"
+        className="searchbox sbx-custom"
+        onReset={() => { onChange(''); }}
+        onSubmit={e => this.validateSearch(e) }
+      >
         <svg xmlns="http://www.w3.org/2000/svg" style={{display: 'none'}}>
           <symbol xmlns="http://www.w3.org/2000/svg" id="sbx-icon-search-3" viewBox="0 0 40 41">
             <path d="M26.51 28.573c-2.803 2.34-6.412 3.748-10.35 3.748C7.236 32.32 0 25.087 0 16.16 0 7.236 7.235 0 16.16 0c8.926 0 16.16 7.235 16.16 16.16 0 4.213-1.61 8.048-4.25 10.925L40 39.015l-1.524 1.524L26.51 28.572zm-10.35 2.132c8.033 0 14.545-6.512 14.545-14.544S24.193 1.617 16.16 1.617 1.617 8.128 1.617 16.16c0 8.033 6.512 14.545 14.545 14.545z"

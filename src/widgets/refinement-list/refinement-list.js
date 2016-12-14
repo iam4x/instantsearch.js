@@ -128,7 +128,8 @@ function refinementList({
     count: cx(bem('count'), userCssClasses.count),
   };
 
-  const render = (facetValues, state, createURL, helperSpecializedSearchFacetValues, templateProps, toggleRefinement, isFromSearch) => {
+  const render = (facetValues, state, createURL,
+                  helperSpecializedSearchFacetValues, templateProps, toggleRefinement, isFromSearch) => {
     // Bind createURL to this specific attribute
     function _createURL(facetValue) {
       return createURL(state.toggleRefinement(attributeName, facetValue));
@@ -169,16 +170,27 @@ function refinementList({
     );
   };
 
+  let lastResultsFromMainSearch = null;
+
   const searchFacetValues = helper =>
     (state, createURL, helperSpecializedSearchFacetValues, templateProps, toggleRefinement) =>
     query => {
-      helper.searchForFacetValues(attributeName, query).then(results => {
-        const facetValues = results.facetHits.map(h => {
-          h.name = h.value;
-          return h;
+      if (query === '' && lastResultsFromMainSearch) {
+        // render with previous data from the helper.
+        render(
+          lastResultsFromMainSearch, state, createURL,
+          helperSpecializedSearchFacetValues, templateProps, toggleRefinement, false);
+      } else {
+        helper.searchForFacetValues(attributeName, query).then(results => {
+          const facetValues = results.facetHits.map(h => {
+            h.name = h.value;
+            return h;
+          });
+          render(
+            facetValues, state, createURL,
+            helperSpecializedSearchFacetValues, templateProps, toggleRefinement, true);
         });
-        render(facetValues, state, createURL, helperSpecializedSearchFacetValues, templateProps, toggleRefinement, true);
-      });
+      }
     };
 
   return {
@@ -213,6 +225,8 @@ function refinementList({
           h.highlighted = h.name;
           return h;
         });
+
+      lastResultsFromMainSearch = facetValues;
 
       render(facetValues, state, createURL, this.searchFacetValues, this._templateProps, this.toggleRefinement, false);
     },
