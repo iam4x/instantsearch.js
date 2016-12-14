@@ -24,8 +24,10 @@ const bem = bemHelper('ais-refinement-list');
  * @param  {string[]|Function} [options.sortBy=['isRefined', 'count:desc', 'name:asc']] How to sort refinements. Possible values: `count:asc|count:desc|name:asc|name:desc|isRefined`.
  *   You can also use a sort function that behaves like the standard Javascript [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Syntax). [*]
  * @param  {string} [options.limit=10] How much facet values to get. When the show more feature is activated this is the minimum number of facets requested (the show more button is not in active state). [*]
- * @param  {boolean} [options.searchForValues=false] Add a search input to let the user search for more facet values
- * @param  {string} [options.searchPlaceholder=""] Value of the search field placeholder
+ * @param  {object|boolean} [options.searchForValues=false] Add a search input to let the user search for more facet values
+ * @param  {string} [options.searchForValues.placeholder] Value of the search field placeholder
+ * @param  {string} [options.searchForValues.templates] Templates to use for search for facet values
+ * @param  {string} [options.searchForValues.templates.noResults] Templates to use for search for facet values
  * @param  {object|boolean} [options.showMore=false] Limit the number of results and display a showMore button
  * @param  {object} [options.showMore.templates] Templates to use for showMore
  * @param  {object} [options.showMore.templates.active] Template used when showMore was clicked
@@ -65,9 +67,8 @@ refinementList({
   [ autoHideContainer=true ],
   [ collapsible=false ],
   [ showMore.{templates: {active, inactive}, limit} ],
-  [ collapsible=false ]
-  [ searchForValues = false ]
-  [ searchPlaceholder = '' ]
+  [ collapsible=false ],
+  [ searchForValues.{placeholder, templates: {noResults}}],
 })`;
 function refinementList({
     container,
@@ -82,7 +83,6 @@ function refinementList({
     autoHideContainer = true,
     showMore = false,
     searchForValues = false,
-    searchPlaceholder = '',
   }) {
   const showMoreConfig = getShowMoreConfig(showMore);
   if (showMoreConfig && showMoreConfig.limit < limit) {
@@ -109,11 +109,9 @@ function refinementList({
     }
   }
 
-  const showMoreTemplates = showMoreConfig && prefixKeys('show-more-', showMoreConfig.templates);
-  const allTemplates =
-    showMoreTemplates ?
-      {...templates, ...showMoreTemplates} :
-      templates;
+  const showMoreTemplates = showMoreConfig ? prefixKeys('show-more-', showMoreConfig.templates) : {};
+  const searchForValuesTemplates = searchForValues ? searchForValues.templates : {};
+  const allTemplates = {...templates, ...showMoreTemplates, ...searchForValuesTemplates};
 
   const cssClasses = {
     root: cx(bem(null), userCssClasses.root),
@@ -163,7 +161,7 @@ function refinementList({
         templateProps={templateProps}
         toggleRefinement={toggleRefinement}
         searchFacetValues={searchFacetValues}
-        searchPlaceholder={searchPlaceholder}
+        searchPlaceholder={searchForValues.placeholder || 'Search for other...'}
         isFromSearch={isFromSearch}
       />,
       containerNode

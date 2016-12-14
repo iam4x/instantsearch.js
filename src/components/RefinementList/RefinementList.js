@@ -178,7 +178,10 @@ class RefinementList extends React.Component {
       null;
 
     const noResults = searchFacetValues && isFromSearch && facetValues.length === 0 ?
-      <div className="no-results">No results</div> :
+      <Template
+        templateKey={'noResults'}
+        {...this.props.templateProps}
+      /> :
       null;
 
     return (

@@ -166,7 +166,7 @@ search.addWidget(
     container: '#searchable-brands',
     attributeName: 'brand',
     operator: 'or',
-    limit: 3,
+    limit: 10,
     cssClasses: {
       header: 'facet-title',
       item: 'facet-value checkbox',
@@ -176,8 +176,12 @@ search.addWidget(
     templates: {
       header: 'Searchable brands',
     },
-    searchForValues: true,
-    searchPlaceholder: 'Other brands...',
+    searchForValues: {
+      placeholder: 'Find other brands...',
+      templates: {
+        noResults: 'No results',
+      },
+    },
   })
 );
 
