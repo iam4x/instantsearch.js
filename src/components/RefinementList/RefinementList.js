@@ -125,25 +125,26 @@ class RefinementList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.searchbox && !nextProps.isFromSearch) {
-      console.log(this.searchbox);
       this.searchbox.clearInput();
     }
   }
 
   render() {
+    const {cssClasses, limitMin, limitMax, facetValues, searchFacetValues, isFromSearch, searchPlaceholder} = this.props;
+
     // Adding `-lvl0` classes
-    const cssClassList = [this.props.cssClasses.list];
+    const cssClassList = [cssClasses.list];
     if (this.props.cssClasses.depth) {
       cssClassList.push(`${this.props.cssClasses.depth}${this.props.depth}`);
     }
 
-    const limit = this.state.isShowMoreOpen ? this.props.limitMax : this.props.limitMin;
+    const limit = this.state.isShowMoreOpen ? limitMax : limitMin;
     const displayedFacetValues = this.props.facetValues.slice(0, limit);
     const displayShowMore = this.props.showMore === true &&
       // "Show more"
-      this.props.facetValues.length > displayedFacetValues.length ||
+      facetValues.length > displayedFacetValues.length ||
       // "Show less", but hide it if the result set changed
-      this.state.isShowMoreOpen && displayedFacetValues.length > this.props.limitMin;
+      this.state.isShowMoreOpen && displayedFacetValues.length > limitMin;
 
     const showMoreBtn = displayShowMore ?
         <Template
@@ -153,13 +154,19 @@ class RefinementList extends React.Component {
         /> :
         undefined;
 
-    const searchInput = this.props.searchFacetValues ?
-      <SearchBox ref={i => { this.searchbox = i; console.log(i); }} placeholder="" onChange={this.props.searchFacetValues}/> : null;
+    const searchInput = searchFacetValues ?
+      <SearchBox ref={i => { this.searchbox = i; }} placeholder={searchPlaceholder} onChange={searchFacetValues}/> :
+      null;
+
+    const noResults = searchFacetValues && isFromSearch && facetValues.length === 0 ?
+      <div className="no-results">No results</div> :
+      null;
 
     return (
       <div className={cx(cssClassList)}>
         {searchInput}
         {displayedFacetValues.map(this._generateFacetItem, this)}
+        {noResults}
         {showMoreBtn}
       </div>
     );
@@ -184,6 +191,7 @@ RefinementList.propTypes = {
   templateProps: React.PropTypes.object.isRequired,
   toggleRefinement: React.PropTypes.func.isRequired,
   searchFacetValues: React.PropTypes.func,
+  searchPlaceholder: React.PropTypes.string,
   isFromSearch: React.PropTypes.bool,
 };
 
